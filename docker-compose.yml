@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-eth_tracker}
+    ports:
+      - "5432:5432"
+
+  eth_tracker:
+    build:
+      context: .
+    environment:
+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-eth_tracker}
+      API_KEY: ${GETBLOCK_API_KEY}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
